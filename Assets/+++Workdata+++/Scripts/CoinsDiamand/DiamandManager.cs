@@ -1,21 +1,17 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class DiamandManager : MonoBehaviour
 {
-    private int collectedDiamands = 0;         // Anzahl eingesammelter Diamanten
-    private int totalDiamandsInScene = 0;      // Anzahl aller Diamanten in der Szene
+    [SerializeField] private int collectedDiamands = 0;                     // Anzahl gesammelter Diamanten
+    [SerializeField] private TextMeshProUGUI diamandText;                  // UI-Text für die Anzeige
+    [SerializeField] private GameManager gameManager;                      // Referenz zum GameManager
 
-    public TextMeshProUGUI diamandText;        // UI-Textfeld zur Anzeige der Zahl
+    public int MaxDiamands => gameManager != null ? gameManager.diamands.Length : 0; // Öffentlich lesbar: maximale Diamanten
 
-    // Öffentliche Eigenschaften für Zugriff von außen (z. B. GameManager)
-    public int CollectedDiamands => collectedDiamands;
-    public int TotalDiamandsInScene => totalDiamandsInScene;
-
-    void Start()
+    private void Start()
     {
-        // Finde alle GameObjects mit dem Tag "Diamand" in der aktuellen Szene
-        totalDiamandsInScene = GameObject.FindGameObjectsWithTag("Diamand").Length;
+        collectedDiamands = 0;
         UpdateDiamandText();
     }
 
@@ -23,13 +19,21 @@ public class DiamandManager : MonoBehaviour
     {
         collectedDiamands++;
         UpdateDiamandText();
+
+        // Prüfen, ob alle Diamanten gesammelt wurden
+    }
+
+    public void ResetDiamands()
+    {
+        collectedDiamands = 0;
+        UpdateDiamandText();
     }
 
     private void UpdateDiamandText()
     {
         if (diamandText != null)
         {
-            diamandText.text = $"{collectedDiamands}/{totalDiamandsInScene}";
+            diamandText.text = collectedDiamands + "/" + MaxDiamands;
         }
     }
 }

@@ -14,10 +14,12 @@ public class GameManager : MonoBehaviour
 
     public PlayerMovement2D playerMovement;    // Referenz auf das Skript zur Spielerbewegung
     public GameObject[] coins;                 // Alle Coins, die in der Szene vorhanden sind
+    public GameObject[] diamands;              // Alle Diamanten, die in der Szene vorhanden sind
 
     private void Start()
     {
         coins = GameObject.FindGameObjectsWithTag("Coin"); // Finde alle Coins anhand ihres Tags
+        diamands = GameObject.FindGameObjectsWithTag("Diamand"); // Finde alle Diamanten anhand ihres Tags
         lostPanel.SetActive(false); // Verstecke das "Verloren"-Panel zu Beginn
         winPanel.SetActive(false);  // Verstecke das "Gewonnen"-Panel zu Beginn
         startCountdownPanel.SetActive(false); // Countdown-Panel zu Beginn nicht anzeigen
@@ -40,6 +42,7 @@ public class GameManager : MonoBehaviour
             // === Animationseffekt starten ===
             countdownText.color = GetCountdownColor(count); // Ändere Farbe je nach Zahl
             countdownText.rectTransform.localScale = Vector3.one * 2f; // Skalierung auf 200%
+
             float t = 0f;
             while (t < 1f)
             {
@@ -58,7 +61,6 @@ public class GameManager : MonoBehaviour
         countdownText.rectTransform.localScale = Vector3.one * 2f; // Skaliere "Go!" etwas größer
 
         yield return new WaitForSeconds(1f); // Zeige "Go!" für eine Sekunde
-
         startCountdownPanel.SetActive(false); // Blende das Countdown-Panel aus
 
         if (playerMovement != null)
@@ -82,6 +84,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         GetComponent<CoinManager>().ResetCoins(); // Setze die Anzahl gesammelter Coins zurück
+        GetComponent<DiamandManager>().ResetDiamands(); // Setze die Anzahl gesammelter Diamanten zurück
         lostPanel.SetActive(false); // Stelle sicher, dass das Verloren-Panel ausgeblendet ist
     }
 
@@ -89,6 +92,7 @@ public class GameManager : MonoBehaviour
     {
         lostPanel.SetActive(false); // Verstecke das Verloren-Panel (zur Sicherheit)
         winPanel.SetActive(true);   // Zeige das Gewinn-Panel an
+        Time.timeScale = 0f;        // Pausiere das Spiel komplett
     }
 
     public void ShowLostPanel()
@@ -102,11 +106,18 @@ public class GameManager : MonoBehaviour
         {
             coin.SetActive(true); // Aktiviere alle Coins erneut (z. B. für Neustart)
         }
+
+        foreach (var diamand in diamands)
+        {
+            diamand.SetActive(true); // Aktiviere alle Diamanten erneut (z. B. für Neustart)
+        }
+
+        Time.timeScale = 0f; // Pausiere das Spiel komplett
     }
 
     public void RestartGame()
     {
+        Time.timeScale = 1f; // Setze Zeit zurück, damit Spiel weiterläuft
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex); // Lade die aktuelle Szene neu
     }
 }
-
