@@ -1,86 +1,95 @@
-using UnityEngine; // Zugriff auf Unity-spezifische Klassen und Methoden
+using UnityEngine; 
 
-public class PlayerMovement2D : MonoBehaviour // Klasse für die 2D-Spielerbewegung
+public class PlayerMovement2D : MonoBehaviour // für 2D-Spielerbewegung
 {
-    public float moveSpeed = 5f; // Bewegungsgeschwindigkeit des Spielers
-    public float jumpForce = 10f; // Sprungkraft nach oben
+    public float moveSpeed = 5f; // Bewegungsgeschwindigkeit
+    public float jumpForce = 10f; // Sprungkraft
 
-    public Transform groundCheck; // Transform-Objekt zur Bodenprüfung
-    public Vector2 groundCheckSize = new Vector2(0.5f, 0.1f); // Größe des Bodenprüfungsbereichs
+    public Transform groundCheck; // Position zu Boden
+    public Vector2 groundCheckSize = new Vector2(0.5f, 0.1f); // Größe des groundCheck
 
-    public LayerMask groundLayer; // Layer-Maske für den Boden
-    public CoinManager coinManager; // Referenz auf den CoinManager
+    public LayerMask groundLayer; // Layer-Maske für Boden
+    public CoinManager coinManager; // Referenz auf CoinManager
 
-    public DiamandManager diamandManager; // Referenz auf den DiamandManager
-    private Rigidbody2D rb; // Rigidbody-Komponente für die Physik
+    public DiamandManager diamandManager; // Referenz für DiamandManager
+    private Rigidbody2D rb; // Rigidbody-Komponente
 
-    private bool isGrounded; // Ob der Spieler aktuell auf dem Boden ist
-    private bool canMove = true; // Steuerung, ob der Spieler sich bewegen darf
+    private bool isGrounded; // Ist der Spieler am Boden?
+    private bool canMove = true; // ist Bewegung erlaubt?
 
-    void Start() // Start-Methode, wird beim Spielstart aufgerufen
+    [Header("Audio")]
+    public AudioClip jumpSound; // Sound für Sprung
+    [Range(0f, 1f)] public float jumpVolume = 1f; // Lautstärke für Sprung
+
+    public AudioClip coinSound; // Sound für Münze
+    [Range(0f, 1f)] public float coinVolume = 0.3f; // Lautstärke für Münze
+
+    public AudioClip diamandSound; // Sound für Diamant
+    [Range(0f, 1f)] public float diamandVolume = 1f; // Lautstärke für Diamant
+
+    private AudioSource audioSource; // Zentrale Audioquelle
+
+    void Start() 
     {
-        rb = GetComponent<Rigidbody2D>(); // Zugriff auf Rigidbody-Komponente
+        rb = GetComponent<Rigidbody2D>(); // Hole Rigidbody-Komponente
+        audioSource = GetComponent<AudioSource>(); // Hole AudioSource
 
-        if (coinManager == null) // Falls kein CoinManager zugewiesen wurde
-        {
-            coinManager = FindObjectOfType<CoinManager>(); // Automatisches Suchen des CoinManagers
-        }
+        if (coinManager == null) // CoinManager nicht zugewiesen?
+            coinManager = FindObjectOfType<CoinManager>(); // Automatisch finden
 
-        if (diamandManager == null) // Falls kein DiamandManager zugewiesen wurde
+        if (diamandManager == null) // DiamandManager nicht zugewiesen?
+            diamandManager = FindObjectOfType<DiamandManager>(); // Automatisch finden
+    }
+
+    void Update() 
+    {
+        if (!canMove) return; // Bewegung erlaubt?
+
+        float moveInput = Input.GetAxisRaw("Horizontal"); // Links/rechts Input
+        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y); // Bewegung setzen
+
+        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer); // Prüfen, ob Boden
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) // Sprung gedrückt & am Boden?
         {
-            diamandManager = FindObjectOfType<DiamandManager>(); // Automatisches Suchen des DiamandManagers
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); // Sprung ausführen
+            PlaySound(jumpSound, jumpVolume); // Sprung-Sound abspielen
         }
     }
 
-    void Update() // Wird jede Frame aufgerufen
+    public void SetCanMove(bool value) // Bewegung aktivieren/deaktivieren
     {
-        if (!canMove) return; // Wenn Bewegung deaktiviert, verlasse Update()
+        canMove = value;
+    }
 
-        float moveInput = Input.GetAxisRaw("Horizontal"); // Eingabe für horizontale Bewegung
-
-        rb.linearVelocity = new Vector2(moveInput * moveSpeed, rb.linearVelocity.y); // Geschwindigkeit anpassen
-
-        isGrounded = Physics2D.OverlapBox(groundCheck.position, groundCheckSize, 0f, groundLayer); // Prüft, ob Boden berührt wird
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) // Wenn Leertaste gedrückt und Spieler am Boden
+    void OnDrawGizmosSelected()
+    {
+        if (groundCheck != null) // Nur wenn gesetzt
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce); // Sprungkraft nach oben setzen
+            Gizmos.color = Color.green; // Farbe grün
+            Gizmos.DrawWireCube(groundCheck.position, groundCheckSize); // Box zeichnen
         }
     }
 
-    public void SetCanMove(bool value) // Aktiviert oder deaktiviert Spielerbewegung
+    private void OnTriggerEnter2D(Collider2D other) // Kollision mit Trigger
     {
-        canMove = value; // Setzt den Bewegungsstatus
-    }
-
-    void OnDrawGizmosSelected() // Zeichnet Hilfslinien im Editor
-    {
-        if (groundCheck != null) // Nur wenn ein GroundCheck-Objekt gesetzt ist
+        if (other.CompareTag("Coin")) // Coin berührt?
         {
-            Gizmos.color = Color.green; // Farbe für die Bodenprüfung auf grün setzen
-            Gizmos.DrawWireCube(groundCheck.position, groundCheckSize); // Zeichnet die Bodenprüfbox
+            if (coinManager != null) coinManager.AddCoin(); // Zähler erhöhen
+            PlaySound(coinSound, coinVolume); // Coin-Sound abspielen
+            Destroy(other.gameObject); // Coin zerstören
+        }
+        else if (other.CompareTag("Diamand")) // Diamant berührt?
+        {
+            if (diamandManager != null) diamandManager.AddDiamand(); // Zähler erhöhen
+            PlaySound(diamandSound, diamandVolume); // Diamant-Sound abspielen
+            Destroy(other.gameObject); // Diamant zerstören
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D other) // Wird aufgerufen, wenn Spieler mit Trigger kollidiert
+    private void PlaySound(AudioClip clip, float volume) // Hilfsmethode für Sound
     {
-        if (other.CompareTag("Coin")) // Prüft, ob ein Coin berührt wurde
-        {
-            if (coinManager != null) // Falls CoinManager vorhanden ist
-            {
-                coinManager.AddCoin(); // Eine Münze hinzufügen
-            }
-
-            Destroy(other.gameObject); // Coin-Objekt zerstören
-        }
-        else if (other.CompareTag("Diamand")) // Prüft, ob ein Diamand berührt wurde
-        {
-            if (diamandManager != null) // Falls DiamandManager vorhanden ist
-            {
-                diamandManager.AddDiamand(); // Einen Diamanten hinzufügen
-            }
-
-            Destroy(other.gameObject); // Diamant-Objekt zerstören
-        }
+        if (clip != null && audioSource != null) // Sound & AudioSource vorhanden?
+            audioSource.PlayOneShot(clip, volume); // Sound mit Lautstärke abspielen
     }
 }
