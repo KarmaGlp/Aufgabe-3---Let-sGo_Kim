@@ -7,7 +7,7 @@ public class DiamandManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI diamandText;                  // UI-Text für die Anzeige
     [SerializeField] private GameManager gameManager;                      // Referenz zum GameManager
 
-    public int MaxDiamands => gameManager != null ? gameManager.diamands.Length : 0; // Öffentlich lesbar: maximale Diamanten
+    public int MaxDiamands => gameManager != null ? gameManager.diamands.Length : 0; // maximale Diamanten
 
     private void Start()
     {

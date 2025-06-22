@@ -1,27 +1,27 @@
 using UnityEngine;
-using UnityEngine.UI; // Für Slider & UI
-using TMPro; // Für TextMeshPro
-using UnityEngine.SceneManagement; // Für Szenenwechsel
-using System.Collections; // Für Coroutines
+using UnityEngine.UI;
+using TMPro; 
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject lostPanel; // Panel bei Spielverlust
-    public GameObject winPanel;  // Panel bei Spielsieg
+    public GameObject lostPanel;
+    public GameObject winPanel;  
 
-    public GameObject startCountdownPanel; // Panel für Countdown
-    public TextMeshProUGUI countdownText;  // Textkomponente des Countdowns
+    public GameObject startCountdownPanel; 
+    public TextMeshProUGUI countdownText;  
 
-    public PlayerMovement2D playerMovement; // Zugriff auf Spielerbewegung
-    public GameObject[] coins;              // Array aller Coins
-    public GameObject[] diamands;           // Array aller Diamanten
+    public PlayerMovement2D playerMovement; 
+    public GameObject[] coins;              
+    public GameObject[] diamands;           
 
     public float gameDuration = 10f; // Spieldauer in Sekunden
-    private float timer;             // Timer zur Laufzeit
-    private bool isTimerRunning = false; // Gibt an, ob Spiel läuft
+    private float timer;             
+    private bool isTimerRunning = false; 
 
-    public Slider timeSlider;       // UI-Slider für Zeit
-    public Image fillImage;         // Füllbild des Sliders
+    public Slider timeSlider;      
+    public Image fillImage;        
 
     private void Start()
     {
@@ -32,8 +32,8 @@ public class GameManager : MonoBehaviour
         winPanel.SetActive(false);
         startCountdownPanel.SetActive(false);
 
-        SetEnemyMovement(false);     // ❌ Gegner sollen zu Beginn NICHT laufen
-        SetPlatformMovement(false);  // ❌ Plattformen sollen ebenfalls stillstehen
+        SetEnemyMovement(false);     // Gegner sollen zu Beginn NICHT laufen
+        SetPlatformMovement(false);  // Plattformen sollen ebenfalls stillstehen
 
         StartCoroutine(CountdownCoroutine()); // Starte Countdown
     }
@@ -128,8 +128,8 @@ public class GameManager : MonoBehaviour
             timeSlider.value = gameDuration;
         }
 
-        SetEnemyMovement(true);     // ✅ Gegner bewegen sich
-        SetPlatformMovement(true);  // ✅ Plattformen bewegen sich
+        SetEnemyMovement(true);     // Gegner bewegen sich
+        SetPlatformMovement(true);  // Plattformen bewegen sich
     }
 
     public void WinGame()
@@ -148,7 +148,7 @@ public class GameManager : MonoBehaviour
             playerMovement.enabled = false;
 
         SetEnemyMovement(false);
-        SetPlatformMovement(false); // ❌ Plattformen stoppen bei Game Over
+        SetPlatformMovement(false); // Plattformen stoppen bei Game Over
 
         foreach (var coin in coins)
         {

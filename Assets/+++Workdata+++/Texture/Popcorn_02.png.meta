@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Popcorn_02_0: -1185327709991911018
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

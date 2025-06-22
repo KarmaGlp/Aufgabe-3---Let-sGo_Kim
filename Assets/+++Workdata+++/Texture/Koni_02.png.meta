@@ -160,7 +160,8 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable: {}
+    nameFileIdTable:
+      Koni_02_0: -719675381909183314
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

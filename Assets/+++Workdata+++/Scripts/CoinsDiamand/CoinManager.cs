@@ -6,7 +6,7 @@ public class CoinManager : MonoBehaviour
     [SerializeField] private int counterCoins = 0;                     // Anzahl gesammelter Coins
     [SerializeField] private TextMeshProUGUI coinsText;                // UI-Text für die Anzeige
     [SerializeField] private GameManager gameManager;                  // Referenz zum GameManager
-    public int MaxCoins => gameManager != null ? gameManager.coins.Length : 0; // Öffentlich lesbar: maximale Coins
+    public int MaxCoins => gameManager != null ? gameManager.coins.Length : 0; // maximale Coins
 
     private void Start()
     {

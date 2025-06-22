@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DeathZone : MonoBehaviour
 {
-    public GameObject lostPanel; // Referenz zum "You Lost"-Panel
+    public GameObject lostPanel;
 
     private void OnTriggerEnter2D(Collider2D other)
     {

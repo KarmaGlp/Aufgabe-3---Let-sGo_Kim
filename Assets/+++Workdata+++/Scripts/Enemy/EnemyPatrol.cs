@@ -22,7 +22,7 @@ public class EnemyPatrol : MonoBehaviour
 
         if (leftPoint == null || rightPoint == null)
         {
-            Debug.LogError("❌ LeftPoint und/oder RightPoint wurden nicht im Inspector zugewiesen!");
+            Debug.LogError(" LeftPoint und/oder RightPoint wurden nicht im Inspector zugewiesen!");
             enabled = false;
         }
     }

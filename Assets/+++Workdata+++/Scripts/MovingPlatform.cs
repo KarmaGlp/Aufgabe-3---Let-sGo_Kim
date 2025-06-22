@@ -16,7 +16,7 @@ public class MovingPlatform : MonoBehaviour
     {
         if (pointA == null || pointB == null)
         {
-            Debug.LogError("❌ PointA oder PointB ist nicht zugewiesen!");
+            Debug.LogError(" PointA oder PointB ist nicht zugewiesen!");
             enabled = false;
             return;
         }
